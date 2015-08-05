@@ -4,7 +4,7 @@
  * August 4, 2015
  *
  * This code implements a mastery-based exercise on graph
- * theory for integration with Smart Sparrow.  
+ * theory for integration with Smart Sparrow.
  *
  * This is our data model - The M in MVC
  */
@@ -24,7 +24,7 @@ function emptyOutArray(myArray) {
  * A graph node has a unique ID. Depending on the search
  * algorithm being used, it may or may not have a heuristic
  * value indicating the node's distance from the goal node,
- * where a larger value indicates greater distance from the 
+ * where a larger value indicates greater distance from the
  * goal. The node also has an array for keeping track of all
  * the times it appears in the search tree.
  */
@@ -87,7 +87,7 @@ GraphModel.prototype.initializeGraph = function() {
 	// This as a quick, cheap way to store initial values
 	// for the nodes in the graph. I'm using an object as
 	//  a dictionary with nodeID:heuristic pairs.
-	var nodeList = {A:7, B:6, C:5, D:4, 
+	var nodeList = {A:7, B:6, C:5, D:4,
 					E:6, F:5, G:4, H:3,
 					I:5};
 
@@ -96,7 +96,7 @@ GraphModel.prototype.initializeGraph = function() {
 	for (var nodeID in nodeList) {
 		// add the node and its heuristic value to the graph
 		this.addNodeToGraph(nodeID, nodeList[nodeID]);
-	}	
+	}
 	// This as a quick, cheap way to store initial values
 	// for the edges in the graph. I'm using an object as a dictionary
 	// of dictionaries with startNodeID:{edge} pairs, where each
@@ -134,7 +134,7 @@ GraphModel.prototype.initializeGraph = function() {
 		}
 	}
 	// delete all nodes that does not have any edges attached at it
-	this.deleteNodesWithNoEdges();	
+	this.deleteNodesWithNoEdges();
 }
 */
 
@@ -158,7 +158,7 @@ GraphModel.prototype.findNode = function(nodeID) {
 	for	(var index = 0; index < this.nodes.length; index++) {
 		// check whether the current nodeID is the target nodeID
 	    if (this.nodes[index].nodeID == nodeID)
-	    	// return the index of the target nodeID within the 
+	    	// return the index of the target nodeID within the
 	    	// node array
 	    	return index;
 	}
@@ -168,16 +168,16 @@ GraphModel.prototype.findNode = function(nodeID) {
 
 
 /*
- * This function returns the index of an edge based on its 
+ * This function returns the index of an edge based on its
  * fromNodeID and toNodeID
  */
 GraphModel.prototype.findEdge = function(fromNodeID, toNodeID) {
 	// loop through edges in tree
 	for	(var index = 0; index < this.edges.length; index++) {
 		// check whether the current nodeID is the target nodeID
-	    if (this.edges[index].fromNodeID == fromNodeID && 
+	    if (this.edges[index].fromNodeID == fromNodeID &&
 	    	this.edges[index].toNodeID == toNodeID)
-	    	// return the index of the target nodeID within the 
+	    	// return the index of the target nodeID within the
 	    	// node array
 	    	return index;
 	}
@@ -187,16 +187,16 @@ GraphModel.prototype.findEdge = function(fromNodeID, toNodeID) {
 
 
 /*
- * This function returns the cost of an edge based on its 
+ * This function returns the cost of an edge based on its
  * fromNodeID and toNodeID
  */
 GraphModel.prototype.findEdgeCost = function(fromNodeID, toNodeID) {
 	// loop through edges in tree
 	for	(var index = 0; index < this.edges.length; index++) {
 		// check whether the current nodeID is the target nodeID
-	    if (this.edges[index].fromNodeID == fromNodeID && 
+	    if (this.edges[index].fromNodeID == fromNodeID &&
 	    	this.edges[index].toNodeID == toNodeID)
-	    	// return the index of the target nodeID within the 
+	    	// return the index of the target nodeID within the
 	    	// node array
 	    	return this.edges[index].cost;
 	}
@@ -218,7 +218,7 @@ GraphModel.prototype.addNodeToGraph = function(nodeID, heuristic) {
 	var newGraphNode = new GraphNode();
 	// Initialize object values
 	newGraphNode.nodeID = nodeID;
-	newGraphNode.heuristic = heuristic;	
+	newGraphNode.heuristic = heuristic;
 	// Add GraphNode object to array of nodes
 	this.nodes[this.nodes.length] = newGraphNode;
 }
@@ -264,7 +264,7 @@ GraphModel.prototype.dumpGraph = function() {
 	// loop through the edges array
 	for	(var index = 0; index < this.edges.length; index++) {
 		// print out details about each edge
-		console.log("Index: " + index + " fromID: " + this.edges[index].fromNodeID 
+		console.log("Index: " + index + " fromID: " + this.edges[index].fromNodeID
 						+ " toID: " + this.edges[index].toNodeID);
 
 	}
@@ -320,5 +320,3 @@ GraphModel.prototype.nodeList = function() {
 	// return list of nodes
 	return nodeList;
 }
-
-
