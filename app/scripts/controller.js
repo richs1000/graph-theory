@@ -4,7 +4,7 @@
  * August 4, 2015
  *
  * This code implements a mastery-based exercise on graph
- * theory for integration with Smart Sparrow.  
+ * theory for integration with Smart Sparrow.
  *
  * This is our controller - The C in MVC
  */
@@ -35,12 +35,16 @@ function GraphController() {
 		numerator: 4,
 		denominator: 5
 	});
-	
+
 	// expose model data to Smart Sparrow
 	pipit.CapiAdapter.expose('mastery', this.graphModel);
 	pipit.CapiAdapter.expose('numerator', this.graphModel);
 	pipit.CapiAdapter.expose('denominator', this.graphModel);
-	
+
+	// initialize the graph
+	this.graphModel.initializeGraph();
+	this.graphModel.dumpGraph();
+
 	this.graphView = new GraphView();
 }
 
