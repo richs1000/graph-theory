@@ -1,0 +1,27 @@
+
+body{
+	background-attachment: fixed;
+	text-align: left;
+}
+
+
+#form1 {
+}
+
+
+#graphCanvas {
+    border: 10px inset blue;
+} 
+
+
+#lblQuestion {
+	font-size: 24px;
+}
+
+#btnSubmit {
+	margin-top: 12px;
+}
+
+#txtAnswer {
+	font-size: 24px;
+}
