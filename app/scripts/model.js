@@ -320,17 +320,3 @@ GraphModel.prototype.nodeList = function() {
 	// return list of nodes
 	return nodeList;
 }
-
-
-/*
- * Check whether the given NodeID is in the nodeList
- */
-GraphModel.prototype.nodeInList = function(node, nodeList) {
-	// loop through the node list
-	for (index = 0; index < nodeList.length; index++) {
-		// do we have a match?
-		if (node == nodeList[index]) return true;
-	}
-	// we didn't find it, so return false
-	return false;
-}
