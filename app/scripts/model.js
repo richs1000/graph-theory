@@ -74,6 +74,15 @@ function GraphModel(_attrs, _undirected) {
 	// the graph is directed or undirected
 	this.undirectedGraph = _undirected || true;
 
+	// we need to keep track of the last <x> answers we've gotten
+	// so we can test for mastery. we use an array as a queue that
+	// stores as many answers as we're willing to consider
+	console.log('denominator = ' + this.get('denominator'));
+	this.answerHistory = [];
+	for (var i = 0; i < this.get('denominator'); i++) {
+		this.answerHistory.push(null);
+	}
+
 	// the things below are in the data model so I don't declare them here
 	// this flag is set to true when the mastery condition is reached
 	//this.mastery = false;

@@ -31,6 +31,7 @@ function GraphController() {
 	this.graphModel.dumpGraph();
 
 	this.graphView = new GraphView();
+	this.graphView.drawAnswerHistory(this.graphModel.answerHistory);
 }
 
 
