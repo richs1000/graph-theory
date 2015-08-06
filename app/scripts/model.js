@@ -77,7 +77,6 @@ function GraphModel(_attrs, _undirected) {
 	// we need to keep track of the last <x> answers we've gotten
 	// so we can test for mastery. we use an array as a queue that
 	// stores as many answers as we're willing to consider
-	console.log('denominator = ' + this.get('denominator'));
 	this.answerHistory = [];
 	for (var i = 0; i < this.get('denominator'); i++) {
 		this.answerHistory.push(null);
@@ -131,11 +130,14 @@ GraphModel.prototype.initializeGraph = function() {
 	// loop over all the start nodes
 	for (var startNodeID in edgeList) {
 		// make an array containing all of the nodes the start node connects to
+		// start with an empty list
 		var neighbors = [];
+		// loop through all the neighbors
 		for (var endNodeID in edgeList[startNodeID]) {
+			// add each neighbor's ID to the end of the list
 			neighbors.push(endNodeID);
 		}
-		// choose some number to remove
+		// choose some number of neighbors to remove (can't remove all the neighbors)
 		var removeCount = getRandomInt(0, neighbors.length);
 		// randomly choose that many nodes to remove
 		for (var count = 0; count < removeCount; count++) {
@@ -279,40 +281,24 @@ GraphModel.prototype.dumpGraph = function() {
 	}
 }
 
-/*
- * This function deletes all nodes with no edges in it
- */
-/*
-GraphModel.prototype.deleteNodesWithNoEdges = function(){
-	//	loop through the node array
-	for (var i in this.graph.nodes){
-		// check the degree of the node
-		if (this.degreeCounter(this.graph.nodes[i].nodeID) == 0) {
-			// delete the node if the node has no edges
-			this.graph.nodes.splice(i,1);
-		}
-	}
-}
-
 
 /*
  * This function counts how many edges a given node has
  */
-/*
 GraphModel.prototype.degreeCounter = function(node){
 	var counter = 0;
 	//	loop through the node array
-	for (var i in this.graph.nodes){
+	for (var i in this.nodes){
 		// is there an egde between the given node and the node in the array?
-		if (this.graph.findEdge(node,this.graph.nodes[i].nodeID) != -1 ||
-		 this.graph.findEdge(this.graph.nodes[i].nodeID,node) != -1){
+		if (this.findEdge(node,this.nodes[i].nodeID) != -1 ||
+		 this.findEdge(this.nodes[i].nodeID,node) != -1){
 		 	// count it
 			counter += 1;
 		}
 	}
 	return counter;
 }
-*/
+
 
 /*
  * This function returns a list of all the nodes in the graph.

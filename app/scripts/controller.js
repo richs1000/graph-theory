@@ -31,7 +31,7 @@ function GraphController() {
 	this.graphModel.dumpGraph();
 
 	this.graphView = new GraphView();
-	this.graphView.drawAnswerHistory(this.graphModel.answerHistory);
+	this.updateDisplay();
 }
 
 
@@ -45,11 +45,9 @@ GraphController.prototype.getModelValue = function(_name) {
 }
 
 
-GraphController.prototype.drawGraph = function() {
-	// get the list of nodes from the model
-	nodeList = this.graphModel.nodeList();
-	// tell the view to draw the nodes
-	this.graphView.drawNodes(nodeList);
+GraphController.prototype.updateDisplay = function() {
+	this.graphView.drawAnswerHistory(this.graphModel.answerHistory);
+	this.graphView.drawGraph(this.graphModel.nodes, this.graphModel.edges, this.graphModel.undirectedGraph);
 }
 
 
