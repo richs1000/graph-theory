@@ -11,7 +11,7 @@ body{
 
 #graphCanvas {
     border: 10px inset blue;
-} 
+}
 
 
 #lblQuestion {
@@ -23,5 +23,9 @@ body{
 }
 
 #txtAnswer {
+	font-size: 24px;
+}
+
+#correctAnswer {
 	font-size: 24px;
 }

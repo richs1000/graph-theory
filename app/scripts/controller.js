@@ -9,21 +9,6 @@
  * This is our controller - The C in MVC
  */
 
-/*
- * Create the data model
- */
-/*
-var dataModel = new GraphModel({
-    mastery: false,
-    numerator: 4,
-    denominator: 5
-});
-
-// expose model data to Smart Sparrow
-pipit.CapiAdapter.expose('mastery', dataModel);
-pipit.CapiAdapter.expose('numerator', dataModel);
-pipit.CapiAdapter.expose('denominator', dataModel);
-*/
 
 /*
  * Create the sim controller
@@ -49,6 +34,16 @@ function GraphController() {
 }
 
 
+GraphController.prototype.setModelValue(_name, _newValue) {
+	this.graphModel.set(_name, _newValue);
+}
+
+
+GraphController.prototype.getModelValue(_name) {
+	return this.graphModel.get(_name);
+}
+
+
 GraphController.prototype.drawGraph = function() {
 	// get the list of nodes from the model
 	nodeList = this.graphModel.nodeList();
@@ -58,6 +53,7 @@ GraphController.prototype.drawGraph = function() {
 
 
 // Create a new Controller for sim
+// The controller interacts with the model and the view
 var graphController = new GraphController();
 
 
