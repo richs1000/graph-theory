@@ -72,7 +72,7 @@ function GraphModel(_attrs, _undirected) {
 	// array of edges - starts off empty
 	this.edges = [];
 	// the graph is directed or undirected
-	this.undirectedGraph = _undirected || true;
+	this.undirectedGraph = _undirected || false;
 
 	// we need to keep track of the last <x> answers we've gotten
 	// so we can test for mastery. we use an array as a queue that

@@ -29,29 +29,22 @@ body{
 	font-size: 24px;
 }
 
+.answerBlock{
+	width:30px;
+	height:30px;
+	border: 1px inset black;
+	display: inline-block;
+	margin-right: 2px;
+}
+
 .noAnswer{
-    width:20px;
-    height:20px;
-    background:white;
-		border: 1px inset black;
-		display: inline-block;
-		margin-right: 2px;
+	background:white;
 }
 
 .rightAnswer{
-    width:20px;
-    height:20px;
     background:green;
-		border: 1px inset black;
-		display: inline-block;
-		margin-right: 2px;
 }
 
 .wrongAnswer{
-    width:20px;
-    height:20px;
     background:red;
-		border: 1px inset black;
-		display: inline-block;
-		margin-right: 2px;
 }
