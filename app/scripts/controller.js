@@ -34,12 +34,12 @@ function GraphController() {
 }
 
 
-GraphController.prototype.setModelValue(_name, _newValue) {
+GraphController.prototype.setModelValue = function(_name, _newValue) {
 	this.graphModel.set(_name, _newValue);
 }
 
 
-GraphController.prototype.getModelValue(_name) {
+GraphController.prototype.getModelValue = function(_name) {
 	return this.graphModel.get(_name);
 }
 
