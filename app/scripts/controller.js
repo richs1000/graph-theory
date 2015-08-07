@@ -20,16 +20,14 @@ function GraphController() {
 		numerator: 4,
 		denominator: 5
 	});
-
 	// expose model data to Smart Sparrow
 	pipit.CapiAdapter.expose('mastery', this.graphModel);
 	pipit.CapiAdapter.expose('numerator', this.graphModel);
 	pipit.CapiAdapter.expose('denominator', this.graphModel);
-
-	// initialize the graph
-	this.graphModel.initializeGraph();
+	// initialize the data model
+	this.graphModel.initializeGraphModel();
 	this.graphModel.dumpGraph();
-
+	// initialize the view
 	this.graphView = new GraphView();
 	this.updateDisplay();
 }
@@ -47,7 +45,7 @@ GraphController.prototype.getModelValue = function(_name) {
 
 GraphController.prototype.updateDisplay = function() {
 	this.graphView.drawAnswerHistory(this.graphModel.answerHistory);
-	this.graphView.drawGraph(this.graphModel.nodes, this.graphModel.edges, this.graphModel.undirectedGraph);
+	this.graphView.drawGraph(this, this.graphModel.nodes, this.graphModel.edges, this.graphModel.undirectedGraph);
 }
 
 

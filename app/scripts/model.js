@@ -35,9 +35,10 @@ function getRandomInt(min, max) {
  * goal. The node also has an array for keeping track of all
  * the times it appears in the search tree.
  */
-function GraphNode(_nodeID) {
+function GraphNode(_nodeID, _exists) {
 	// Node ID - unique for each node in graph
 	this.nodeID = _nodeID || '';
+	// exists -
 } // GraphNode
 
 
@@ -67,13 +68,32 @@ function GraphModel(_attrs, _undirected) {
 	// can access values within the model - here I call the CapiModel
 	// constructor
 	pipit.CapiAdapter.CapiModel.call(this, _attrs)
+/*
 	// array of nodes - starts off empty
 	this.nodes = [];
 	// array of edges - starts off empty
 	this.edges = [];
+	// adjacency list - used to answer questions
+	// here I'm treating an object like a dictionary of lists, indexed by
+	// the node index
+	this.adjacencyList = {A:[], B:[], C:[], D:[], E:[], F:[], G:[], H:[], I:[]};
+	// adjacency matrix - used to answer questions
+	// rows are indexed by start of edge, columns are indexed by end of edge
+	// items are indexed as adjacencyMatrix[from][to]
+	this.adjacencyMatrix = [
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+	];
+*/
 	// the graph is directed or undirected
-	this.undirectedGraph = _undirected || false;
-
+	this.undirectedGraph = _undirected || true;
 	// we need to keep track of the last <x> answers we've gotten
 	// so we can test for mastery. we use an array as a queue that
 	// stores as many answers as we're willing to consider
@@ -99,63 +119,93 @@ function GraphModel(_attrs, _undirected) {
 GraphModel.prototype = new pipit.CapiAdapter.CapiModel;
 
 
-GraphModel.prototype.initializeGraph = function() {
-	// This as a quick, cheap way to store IDs
-	// for the nodes in the graph. I'm using an object as
-	//  a dictionary with nodeID:neighbors pairs.
-	var nodeList = {A:3, B:5, C:3, D:5,
-	 				E:8, F:5, G:3, H:5,
-	 				I:3};
-	// Add some nodes to the state space graph
-	// loop over all of the nodes in the node list
-	for (var nodeID in nodeList) {
-		// add the node to the graph
-		this.addNodeToGraph(nodeID);
+/*
+* This function empties out any old nodes from a previous graph and
+* creates brand new nodes.
+ * This function also gets rid of any old edges and then stores three
+ * equivalent representations of the connections between nodes. The
+ * edges list is what I actually use internally. The adjacency list
+ * and adjacency matrix are used to answer questions posed to the
+ * user.
+*/
+GraphModel.prototype.initializeGraphModel = function() {
+	// reset array of nodes
+	this.nodes = [];
+// reset array of edges - starts off empty
+	this.edges = [];
+	// adjacency list - used to answer questions
+	// here I'm treating an object like a dictionary of lists, indexed by
+	// the node index
+	this.adjacencyList = {A:[], B:[], C:[], D:[], E:[], F:[], G:[], H:[], I:[]};
+	// adjacency matrix - used to answer questions
+	// rows are indexed by start of edge, columns are indexed by end of edge
+	// items are indexed as adjacencyMatrix[from][to]
+	this.adjacencyMatrix = [
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+	];
+	// This as a quick, cheap way to store each node's neighbors.
+	// I'm using an object as a dictionary of lists, where each
+	// list contains all the nodes that could connect to the index
+	// node
+	// if the graph is undirected, I only consider half the possible
+	// edges
+	if (this.undirected) {
+		var neighborDict = {
+			A:['B', 'D', 'E'],
+			B:['C', 'D', 'E', 'F'],
+			C:['E', 'F'],
+			D:['E', 'G', 'H'],
+			E:['F', 'G', 'H', 'I'],
+			F:['H', 'I'],
+			G:['H'],
+			H:['I'],
+			I:[],
+		};
+	// otherwise, I have to consider all of them
+	} else {
+		var neighborDict = {
+			A:['B', 'D', 'E'],
+			B:['A', 'C', 'D', 'E', 'F'],
+			C:['B', 'E', 'F'],
+			D:['A', 'B', 'E', 'G', 'H'],
+			E:['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I'],
+			F:['B', 'C', 'E', 'H', 'I'],
+			G:['D', 'E', 'H'],
+			H:['D', 'E', 'F', 'G', 'I'],
+			I:['E', 'F', 'H'],
+		};
 	}
-	// This as a quick, cheap way to store initial values
-	// for the edges in the graph. I'm using an object as a dictionary
-	// of dictionaries with startNodeID:{edge} pairs, where each
-	// {edge} consists of endNodeID:cost pairs
-	var edgeList = {
-		A:{B:-1, D:-1, E:-1},
-		B:{A:-1, C:-1, D:-1, E:-1, F:-1},
-		C:{B:-1, E:-1, F:-1},
-		D:{A:-1, B:-1, E:-1, G:-1, H:-1},
-		E:{A:-1, B:-1, C:-1, D:-1, F:-1, G:-1, H:-1, I:-1},
-		F:{B:-1, C:-1, E:-1, H:-1, I:-1},
-		G:{D:-1, E:-1, H:-1},
-		H:{D:-1, E:-1, F:-1, G:-1, I:-1},
-		I:{E:-1, F:-1, H:-1},
-	};
-	// loop over all the start nodes
-	for (var startNodeID in edgeList) {
-		// make an array containing all of the nodes the start node connects to
-		// start with an empty list
-		var neighbors = [];
-		// loop through all the neighbors
-		for (var endNodeID in edgeList[startNodeID]) {
-			// add each neighbor's ID to the end of the list
-			neighbors.push(endNodeID);
-		}
-		// choose some number of neighbors to remove (can't remove all the neighbors)
-		var removeCount = getRandomInt(0, neighbors.length);
+	// create nodes and edges
+	for (var startNodeID in neighborDict) {
+		// add the node to our list of nodes
+		this.addNodeToGraph(startNodeID);
+		// choose some number of neighbors to remove
+		var removeCount = getRandomInt(0, neighborDict[startNodeID].length + 1);
 		// randomly choose that many nodes to remove
 		for (var count = 0; count < removeCount; count++) {
 			// pick a random index
-			index = getRandomInt(0, neighbors.length);
+			index = getRandomInt(0, neighborDict[startNodeID].length);
 			// pull that item out of the array
-			neighbors.splice(index, 1);
+			neighborDict[startNodeID].splice(index, 1);
 		}
 		// create an edge for all the nodes remaining in the neighbors array
-		for (var i=0; i < neighbors.length; i++) {
+		for (var i=0; i < neighborDict[startNodeID].length; i++) {
 			// pick a random cost for the edge
 			var randCost = getRandomInt(0, 10);
 			// add the edge and its cost to the graph model
-			this.addEdgeToGraph(startNodeID, neighbors[i], randCost);
+			this.addEdgeToGraph(startNodeID, neighborDict[startNodeID][i], randCost);
 			// if this is an undirected graph, then add an edge in the other direction
 			if (this.undirectedGraph) {
 				// add the "opposite" edge and its cost to the graph model
-				this.addEdgeToGraph(neighbors[i], startNodeID, randCost);
+				this.addEdgeToGraph(neighborDict[startNodeID][i], startNodeID, randCost);
 			}
 		}
 	}
@@ -259,6 +309,10 @@ GraphModel.prototype.addEdgeToGraph = function(fromNodeID, toNodeID, cost) {
 	var newGraphEdge = new GraphEdge(fromNodeID, toNodeID, cost);
 	// Add GraphEdge object to array of edges
 	this.edges.push(newGraphEdge);
+	// add edge to the adjacency list
+	this.adjacencyList[fromNodeID].push({toNodeID:cost});
+	// add edge to the adjacency matrix
+	this.adjacencyMatrix[fromNodeID.charCodeAt(0) - 'A'.charCodeAt()][toNodeID.charCodeAt(0) - 'A'.charCodeAt()] = cost;
 }
 
 
@@ -283,15 +337,43 @@ GraphModel.prototype.dumpGraph = function() {
 
 
 /*
- * This function counts how many edges a given node has
+ * These functions count how many edges a given node has
  */
-GraphModel.prototype.degreeCounter = function(node){
+GraphModel.prototype.degree = function(node){
 	var counter = 0;
 	//	loop through the node array
 	for (var i in this.nodes){
 		// is there an egde between the given node and the node in the array?
-		if (this.findEdge(node,this.nodes[i].nodeID) != -1 ||
-		 this.findEdge(this.nodes[i].nodeID,node) != -1){
+		if (this.findEdge(node.nodeID, this.nodes[i].nodeID) != -1 ||
+		 this.findEdge(this.nodes[i].nodeID, node.nodeID) != -1){
+		 	// count it
+			counter += 1;
+		}
+	}
+	return counter;
+}
+
+
+GraphModel.prototype.inDegree = function(node){
+	var counter = 0;
+	//	loop through the node array
+	for (var i in this.nodes){
+		// is there an edge to the given node from the node in the array?
+		if (this.findEdge(this.nodes[i].nodeID, node.nodeID) != -1) {
+		 	// count it
+			counter += 1;
+		}
+	}
+	return counter;
+}
+
+
+GraphModel.prototype.outDegree = function(node){
+	var counter = 0;
+	//	loop through the node array
+	for (var i in this.nodes){
+		// is there an egde from the given node to the node in the array?
+		if (this.findEdge(node.nodeID, this.nodes[i].nodeID) != -1) {
 		 	// count it
 			counter += 1;
 		}

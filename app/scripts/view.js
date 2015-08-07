@@ -26,15 +26,16 @@ function GraphView() {
 GraphView.prototype.setupControls = function() {
 	// add event handler for submit button
 	$( "#btnSubmit" ).click(function() {
-		console.log("submit button pressed");
-		console.log("mastery = " + graphController.getModelValue('mastery'));
-		console.log("numerator = " + graphController.getModelValue('numerator'))
-		console.log("denominator = " + graphController.getModelValue('denominator'))
-		// empty the text field where the user enters an answer
-		$( "#txtAnswer" ).val('');
+		// check the answer
+
+		// record whether it was right or wrong
+
 		// display a message: correct or not?
 		$( "#correctAnswer" ).html("The correct answer is...");
+		// has mastery been demonstrated?
 		graphController.setModelValue('mastery', true);
+		// empty the text field where the user enters an answer
+		$( "#txtAnswer" ).val('');
 	});
 }
 
@@ -79,23 +80,24 @@ GraphView.prototype.setupGraphView = function() {
 	// erase the canvas
 	this.graphContext.clearRect(0, 0, this.graphCanvas.width, this.graphCanvas.height);
 	// set canvas to 1/3 width of window
-	this.graphContext.canvas.width  = (window.innerWidth / 3) - 10;
+	//this.graphContext.canvas.width  = (window.innerWidth / 3) - 10;
 	// set radius for each node
 	this.graphNodeRadius = 20;
 	// create an object filled with node objects. each
 	// object stores:
 	// - the x and y position of the node within the canvas,
 	// - the id of the node
+	// - a flag for whether or not it should be drawn
 	this.graphNodes = {
-		A:{x:50, y:50, id:'A'},
-		B:{x:200, y:50, id:'B'},
-		C:{x:350, y:50, id:'C'},
-		D:{x:50, y:150, id:'D'},
-		E:{x:200, y:150, id:'E'},
-		F:{x:350, y:150, id:'F'},
-		G:{x:50, y:250, id:'G'},
-		H:{x:200, y:250, id:'H'},
-		I:{x:350, y:250, id:'I'},
+		A:{x:50, y:50, id:'A', draw: true},
+		B:{x:200, y:50, id:'B', draw: true},
+		C:{x:350, y:50, id:'C', draw: true},
+		D:{x:50, y:150, id:'D', draw: true},
+		E:{x:200, y:150, id:'E', draw: true},
+		F:{x:350, y:150, id:'F', draw: true},
+		G:{x:50, y:250, id:'G', draw: true},
+		H:{x:200, y:250, id:'H', draw: true},
+		I:{x:350, y:250, id:'I', draw: true},
 	};
 }
 
@@ -104,12 +106,12 @@ GraphView.prototype.setupGraphView = function() {
  * Draw the graph on the canvas. This function is called by the controller
  * object.
  */
-GraphView.prototype.drawGraph = function(nodes, edges, undirected) {
+GraphView.prototype.drawGraph = function(controller, nodes, edges, undirected) {
 	// erase the canvas
 	this.graphContext.clearRect(0, 0, this.graphCanvas.width, this.graphCanvas.height);
 	this.graphContext.canvas.width  = (window.innerWidth / 3) - 10;
 	// draw all the nodes
-	this.drawNodes(nodes);
+	this.drawNodes(controller, nodes);
 	// draw the edges between the nodes
 	this.drawEdges(edges, undirected);
 }
@@ -213,8 +215,10 @@ GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected) {
 			this.graphContext.lineTo(botx,boty);
 			this.graphContext.stroke();
 		}
+		//
 		// if we have a cost, add costs to the graph
 		//
+		/*
 		if (cost > 0) {
 			// set the font for the cost
 			this.graphContext.textAlign = "center";
@@ -229,6 +233,7 @@ GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected) {
 			// draw the cost string
 			this.graphContext.fillText(costString, midX, midY);
 		}
+		*/
 	} // if we have a context
 }
 
@@ -238,12 +243,15 @@ GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected) {
  * objects
  */
 
-GraphView.prototype.drawNodes = function(nodes) {
+GraphView.prototype.drawNodes = function(controller, nodes) {
 	// make sure we have a canvas and a context
 	if (this.graphCanvas.getContext) {
 		// loop through the list of nodes
 		for (i = 0; i < nodes.length; i++) {
-			this.drawNode(nodes[i].nodeID);
+			// if there is at least one edge into or out of the node
+			if (controller.graphModel.degree(nodes[i]) > 0)
+				// draw the node
+				this.drawNode(nodes[i].nodeID);
 		} // loop over all nodes in object
 	} // if we have a context
 }
