@@ -189,8 +189,8 @@ GraphModel.prototype.initializeGraphModel = function() {
 	for (var startNodeID in neighborDict) {
 		// add the node to our list of nodes
 		this.addNodeToGraph(startNodeID);
-		// choose some number of neighbors to remove
-		var removeCount = getRandomInt(0, neighborDict[startNodeID].length + 1);
+		// choose some number of neighbors to remove (at least one, maybe all)
+		var removeCount = getRandomInt(1, neighborDict[startNodeID].length + 1);
 		// randomly choose that many nodes to remove
 		for (var count = 0; count < removeCount; count++) {
 			// pick a random index
