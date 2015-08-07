@@ -25,6 +25,15 @@ function GraphView(_controller) {
 }
 
 
+GraphView.prototype.presentQuestion = function () {
+	console.log('presenting question');
+	// clear the existing question
+	$( "#lblQuestion" ).text(this.controller.nextQuestion());
+	// empty the text field where the user enters an answer
+	$( "#txtAnswer" ).val('');
+};
+
+
 GraphView.prototype.setupControls = function() {
 	// add event handler for submit button
 	$( "#btnSubmit" ).click(function() {
@@ -33,7 +42,7 @@ GraphView.prototype.setupControls = function() {
 		// record whether it was right or wrong
 
 		// display a message: correct or not?
-		$( "#correctAnswer" ).html("The correct answer is...");
+		$( "#txtFeedback" ).html("The correct answer is...");
 		// has mastery been demonstrated?
 		graphController.setModelValue('mastery', true);
 		// empty the text field where the user enters an answer
@@ -251,9 +260,10 @@ GraphView.prototype.drawNodes = function(nodes) {
 		// loop through the list of nodes
 		for (i = 0; i < nodes.length; i++) {
 			// if there is at least one edge into or out of the node
-			if (this.controller.graphModel.degree(nodes[i]) > 0)
+			if (this.controller.graphModel.degree(nodes[i]) > 0) {
 				// draw the node
 				this.drawNode(nodes[i].nodeID);
+			}
 		} // loop over all nodes in object
 	} // if we have a context
 }

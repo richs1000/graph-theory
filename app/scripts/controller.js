@@ -26,7 +26,6 @@ function GraphController() {
 	pipit.CapiAdapter.expose('denominator', this.graphModel);
 	// initialize the data model
 	this.graphModel.initializeGraphModel();
-	this.graphModel.dumpGraph();
 	// initialize the view
 	this.graphView = new GraphView(this);
 	this.updateDisplay();
@@ -44,10 +43,35 @@ GraphController.prototype.getModelValue = function(_name) {
 
 
 GraphController.prototype.updateDisplay = function() {
+	// draw the results for the last five questions
 	this.graphView.drawAnswerHistory(this.graphModel.answerHistory);
+	// draw the graph on the screen
 	this.graphView.drawGraph(this.graphModel.nodes, this.graphModel.edges, this.graphModel.undirectedGraph);
+	// display the next question
+	this.graphView.presentQuestion();
 }
 
+
+GraphController.prototype.nextQuestion = function() {
+	// choose a question index at random
+	this.graphModel.questionIndex = getRandomInt(0, this.graphModel.questions.length);
+	// get the question template
+	var questionTemplate = this.graphModel.questions[this.graphModel.questionIndex];
+/*
+	// do we need to replace any node placeholders?
+	// What is the degree of node n? (How many edges does it connect to?)
+	if this.graphModel.questionIndex == 2 {
+		// choose a node with degree > 0 (so we know it was drawn)
+		var randomNode = this.graphModel.randomNode();
+		//
+	// Is there an edge between <x> and <y>?
+	} else if this.graphModel.questionIndex == 3 {
+
+	}
+*/
+	// return the question string
+	return questionTemplate;
+}
 
 // Create a new Controller for sim
 // The controller interacts with the model and the view

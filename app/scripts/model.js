@@ -26,6 +26,20 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+
+/*
+ * I use the Question class to store the question string and
+ * the acceptable answer(s)
+ */
+function Question(_question, _answers) {
+	// the question is a string that can be displayed to the user
+	this.question = _question;
+	// answers are stored in an array, to accommodate questions with
+	// multiple answers
+	this.answers = _answers;
+}
+
+
 /*
  * GraphNode represents the nodes within the state space graph.
  * A graph node has a unique ID. Depending on the search
@@ -35,10 +49,9 @@ function getRandomInt(min, max) {
  * goal. The node also has an array for keeping track of all
  * the times it appears in the search tree.
  */
-function GraphNode(_nodeID, _exists) {
+function GraphNode(_nodeID) {
 	// Node ID - unique for each node in graph
 	this.nodeID = _nodeID || '';
-	// exists -
 } // GraphNode
 
 
@@ -70,30 +83,6 @@ function GraphModel(_controller, _attrs) {
 	// can access values within the model - here I call the CapiModel
 	// constructor
 	pipit.CapiAdapter.CapiModel.call(this, _attrs)
-/*
-	// array of nodes - starts off empty
-	this.nodes = [];
-	// array of edges - starts off empty
-	this.edges = [];
-	// adjacency list - used to answer questions
-	// here I'm treating an object like a dictionary of lists, indexed by
-	// the node index
-	this.adjacencyList = {A:[], B:[], C:[], D:[], E:[], F:[], G:[], H:[], I:[]};
-	// adjacency matrix - used to answer questions
-	// rows are indexed by start of edge, columns are indexed by end of edge
-	// items are indexed as adjacencyMatrix[from][to]
-	this.adjacencyMatrix = [
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-	];
-*/
 	// the graph is directed or undirected
 	this.undirectedGraph = false;
 	// we need to keep track of the last <x> answers we've gotten
@@ -103,6 +92,22 @@ function GraphModel(_controller, _attrs) {
 	for (var i = 0; i < this.get('denominator'); i++) {
 		this.answerHistory.push(null);
 	}
+
+	//
+	// questions
+	//
+	// How many nodes does this graph have?
+	// What is the cardinality of this graph? (How many edges does this graph have?)
+	// What is the degree of node n? (How many edges does it connect to?)
+	// Is there an edge between <x> and <y>?
+	this.questions = [
+		"How many nodes does this graph have?",
+		"What is the cardinality of this graph?",
+		"What is the degree of node _x_?",
+		"True or False: There an edge between node _x_ and node _y_"
+	];
+	// the question index is used to rotate through the questions
+	this.questionIndex = 0;
 
 	// the things below are in the data model so I don't declare them here
 	// this flag is set to true when the mastery condition is reached
@@ -223,6 +228,22 @@ GraphModel.prototype.reset = function() {
 	emptyOutArray(this.nodes);
 	// array of edges - starts off empty
 	emptyOutArray(this.edges);
+}
+
+
+/*
+ * Choose a random node for use in a question
+ */
+GraphModel.prototype.randomNode = function() {
+	// choose a random index
+	var index = getRandomInt(0, this.nodes.length);
+	// make sure the node has degree > 0
+	while (this.degree(this.nodes[index]) <= 0) {
+		// keep looking until you find a node that works
+		index = (index + 1) % this.nodes.length;
+	}
+	// return the node
+	return this.nodes[index];
 }
 
 
