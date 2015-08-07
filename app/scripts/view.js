@@ -15,7 +15,9 @@
  * this involves drawing the actual graph and clearing out the
  * text field for the user's answer
  */
-function GraphView() {
+function GraphView(_controller) {
+	// keep a link to the controller
+	this.controller = _controller;
 	// Only set up the controls once
 	this.setupControls();
 	// set up graph view
@@ -106,12 +108,12 @@ GraphView.prototype.setupGraphView = function() {
  * Draw the graph on the canvas. This function is called by the controller
  * object.
  */
-GraphView.prototype.drawGraph = function(controller, nodes, edges, undirected) {
+GraphView.prototype.drawGraph = function(nodes, edges, undirected) {
 	// erase the canvas
 	this.graphContext.clearRect(0, 0, this.graphCanvas.width, this.graphCanvas.height);
 	this.graphContext.canvas.width  = (window.innerWidth / 3) - 10;
 	// draw all the nodes
-	this.drawNodes(controller, nodes);
+	this.drawNodes(nodes);
 	// draw the edges between the nodes
 	this.drawEdges(edges, undirected);
 }
@@ -243,13 +245,13 @@ GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected) {
  * objects
  */
 
-GraphView.prototype.drawNodes = function(controller, nodes) {
+GraphView.prototype.drawNodes = function(nodes) {
 	// make sure we have a canvas and a context
 	if (this.graphCanvas.getContext) {
 		// loop through the list of nodes
 		for (i = 0; i < nodes.length; i++) {
 			// if there is at least one edge into or out of the node
-			if (controller.graphModel.degree(nodes[i]) > 0)
+			if (this.controller.graphModel.degree(nodes[i]) > 0)
 				// draw the node
 				this.drawNode(nodes[i].nodeID);
 		} // loop over all nodes in object

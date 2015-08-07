@@ -15,11 +15,11 @@
  */
 function GraphController() {
 	// create a data model that exposes parameters to smart sparrow
-	this.graphModel = new GraphModel({
+	this.graphModel = new GraphModel(this, {
 		mastery: false,
 		numerator: 4,
 		denominator: 5
-	});
+	}, false);
 	// expose model data to Smart Sparrow
 	pipit.CapiAdapter.expose('mastery', this.graphModel);
 	pipit.CapiAdapter.expose('numerator', this.graphModel);
@@ -28,7 +28,7 @@ function GraphController() {
 	this.graphModel.initializeGraphModel();
 	this.graphModel.dumpGraph();
 	// initialize the view
-	this.graphView = new GraphView();
+	this.graphView = new GraphView(this);
 	this.updateDisplay();
 }
 
@@ -45,7 +45,7 @@ GraphController.prototype.getModelValue = function(_name) {
 
 GraphController.prototype.updateDisplay = function() {
 	this.graphView.drawAnswerHistory(this.graphModel.answerHistory);
-	this.graphView.drawGraph(this, this.graphModel.nodes, this.graphModel.edges, this.graphModel.undirectedGraph);
+	this.graphView.drawGraph(this.graphModel.nodes, this.graphModel.edges, this.graphModel.undirectedGraph);
 }
 
 

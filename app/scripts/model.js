@@ -63,7 +63,9 @@ function GraphEdge(_fromNodeID, _toNodeID, _cost) {
  * The GraphModel consists of an array of nodes and an array
  * of edges.
  */
-function GraphModel(_attrs, _undirected) {
+function GraphModel(_controller, _attrs) {
+	// save a link to the controller
+	this.controller = _controller;
 	// we want GraphModel to inherit from CapiModel so SmartSparrow
 	// can access values within the model - here I call the CapiModel
 	// constructor
@@ -93,7 +95,7 @@ function GraphModel(_attrs, _undirected) {
 	];
 */
 	// the graph is directed or undirected
-	this.undirectedGraph = _undirected || true;
+	this.undirectedGraph = false;
 	// we need to keep track of the last <x> answers we've gotten
 	// so we can test for mastery. we use an array as a queue that
 	// stores as many answers as we're willing to consider
@@ -209,6 +211,7 @@ GraphModel.prototype.initializeGraphModel = function() {
 			}
 		}
 	}
+	console.log(this.adjacencyList)
 }
 
 
@@ -299,10 +302,6 @@ GraphModel.prototype.addEdgeToGraph = function(fromNodeID, toNodeID, cost) {
 	if (fromNodeID == toNodeID) return;
 	// Is cost > 0?
 	if (cost < 0) return;
-	// does the from node already exist?
-	if (this.findNode(fromNodeID) < 0) return;
-	// does the to node already exist?
-	if (this.findNode(toNodeID) < 0) return;
 	// does the edge already exist?
 	if (this.findEdge(fromNodeID, toNodeID) >= 0) return;
 	// Create a GraphEdge object
