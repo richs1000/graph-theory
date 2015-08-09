@@ -45,8 +45,15 @@ GraphView.prototype.setupControls = function() {
 		$( "#txtFeedback" ).html("The correct answer is...");
 		// has mastery been demonstrated?
 		graphController.setModelValue('mastery', true);
+		// enable next question button
+		$( "#btnNextQuestion" ).prop('disabled', false);
+	});
+	// add event handler for next question button
+	$( "#btnNextQuestion" ).click(function() {
 		// empty the text field where the user enters an answer
 		$( "#txtAnswer" ).val('');
+		// disable next question button
+		$( "#btnNextQuestion" ).prop('disabled', true);
 	});
 }
 
