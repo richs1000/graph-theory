@@ -56,7 +56,6 @@ GraphController.prototype.updateDisplay = function() {
 GraphController.prototype.nextQuestion = function() {
 	// choose a question index at random
 	this.graphModel.questionIndex = getRandomInt(0, this.graphModel.questions.length);
-	this.graphModel.questionIndex = 3;
 	// get the corresponding question template
 	var questionTemplate = this.graphModel.questions[this.graphModel.questionIndex];
 	// start with an empty question string
