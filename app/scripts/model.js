@@ -76,15 +76,13 @@ function GraphEdge(_fromNodeID, _toNodeID, _cost) {
  * The GraphModel consists of an array of nodes and an array
  * of edges.
  */
-function GraphModel(_controller, _undirected, _attrs) {
+function GraphModel(_controller, _attrs) {
 	// save a link to the controller
 	this.controller = _controller;
 	// we want GraphModel to inherit from CapiModel so SmartSparrow
 	// can access values within the model - here I call the CapiModel
 	// constructor
 	pipit.CapiAdapter.CapiModel.call(this, _attrs)
-	// the graph is directed or undirected
-	this.undirected = _undirected;
 	// we need to keep track of the last <x> answers we've gotten
 	// so we can test for mastery. we use an array as a queue that
 	// stores as many answers as we're willing to consider
@@ -104,6 +102,8 @@ function GraphModel(_controller, _undirected, _attrs) {
 	//this.masteryNumerator = 4;
 	// this is the denominator for the mastery condition - out of how many total?
 	//this.masteryDenominator = 5;
+	// // the graph is directed or undirected
+	// this.undirected = _undirected;
 } // GraphModel
 
 
@@ -152,7 +152,7 @@ GraphModel.prototype.initializeGraphModel = function() {
 	// node
 	// if the graph is undirected, I only consider half the possible
 	// edges
-	if (this.undirected) {
+	if (this.get('undirected')) {
 		var neighborDict = {
 			A:['B', 'D', 'E'],
 			B:['C', 'D', 'E', 'F'],
@@ -198,7 +198,7 @@ GraphModel.prototype.initializeGraphModel = function() {
 			// add the edge and its cost to the graph model
 			this.addEdgeToGraph(startNodeID, neighborDict[startNodeID][i], randCost);
 			// if this is an undirected graph, then add an edge in the other direction
-			if (this.undirected) {
+			if (this.get('undirected')) {
 				// add the "opposite" edge and its cost to the graph model
 				this.addEdgeToGraph(neighborDict[startNodeID][i], startNodeID, randCost);
 			}
@@ -394,7 +394,7 @@ GraphModel.prototype.dumpGraph = function() {
  * i.e., how many edges are in the graph
  */
 GraphModel.prototype.cardinality = function() {
-	if (this.undirected) {
+	if (this.get('undirected')) {
 		return this.edges.length / 2;
 	} else {
 		return this.edges.length;
@@ -407,7 +407,7 @@ GraphModel.prototype.cardinality = function() {
 GraphModel.prototype.degree = function(node) {
 	var counter = 0;
 	// if this is an undirected graph, count each edge once
-	if (this.undirected) {
+	if (this.get('undirected')) {
 		//	loop through the node array
 		for (var i in this.nodes){
 			// is there an egde between the given node and the node in the array?

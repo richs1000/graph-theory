@@ -15,11 +15,12 @@
  */
 function GraphController() {
 	// create a data model that exposes parameters to smart sparrow
-	this.graphModel = new GraphModel(this, true, {
-		mastery: false,
+	this.graphModel = new GraphModel(this, {
+		mastery: 'false',
 		numerator: 4,
-		denominator: 5
-	}, false);
+		denominator: 5,
+		undirected: 'true',
+	});
 	// expose model data to Smart Sparrow
 	pipit.CapiAdapter.expose('mastery', this.graphModel);
 	pipit.CapiAdapter.expose('numerator', this.graphModel);
@@ -47,7 +48,7 @@ GraphController.prototype.updateDisplay = function() {
 	// draw the results for the last five questions
 	this.graphView.drawAnswerHistory(this.graphModel.answerHistory);
 	// draw the graph on the screen
-	this.graphView.drawGraph(this.graphModel.nodes, this.graphModel.edges, this.graphModel.undirected);
+	this.graphView.drawGraph(this.graphModel.nodes, this.graphModel.edges, this.graphModel.get('undirected'));
 	// display the next question
 	this.graphView.presentQuestion();
 }
