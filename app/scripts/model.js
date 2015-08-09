@@ -76,7 +76,7 @@ function GraphEdge(_fromNodeID, _toNodeID, _cost) {
  * The GraphModel consists of an array of nodes and an array
  * of edges.
  */
-function GraphModel(_controller, _attrs) {
+function GraphModel(_controller, _undirected, _attrs) {
 	// save a link to the controller
 	this.controller = _controller;
 	// we want GraphModel to inherit from CapiModel so SmartSparrow
@@ -84,7 +84,7 @@ function GraphModel(_controller, _attrs) {
 	// constructor
 	pipit.CapiAdapter.CapiModel.call(this, _attrs)
 	// the graph is directed or undirected
-	this.undirectedGraph = false;
+	this.undirected = _undirected;
 	// we need to keep track of the last <x> answers we've gotten
 	// so we can test for mastery. we use an array as a queue that
 	// stores as many answers as we're willing to consider
@@ -96,18 +96,6 @@ function GraphModel(_controller, _attrs) {
 	//
 	// questions
 	//
-	// How many nodes does this graph have?
-	// What is the cardinality of this graph? (How many edges does this graph have?)
-	// What is the degree of node n? (How many edges does it connect to?)
-	// Is there an edge between <x> and <y>?
-	this.questions = [
-		"How many nodes does this graph have?",
-		"What is the cardinality of this graph?",
-		"What is the degree of node _x_?",
-		"True or False: There an edge between node _x_ and node _y_"
-	];
-	// the question index is used to rotate through the questions
-	this.questionIndex = 0;
 
 	// the things below are in the data model so I don't declare them here
 	// this flag is set to true when the mastery condition is reached
@@ -210,7 +198,7 @@ GraphModel.prototype.initializeGraphModel = function() {
 			// add the edge and its cost to the graph model
 			this.addEdgeToGraph(startNodeID, neighborDict[startNodeID][i], randCost);
 			// if this is an undirected graph, then add an edge in the other direction
-			if (this.undirectedGraph) {
+			if (this.undirected) {
 				// add the "opposite" edge and its cost to the graph model
 				this.addEdgeToGraph(neighborDict[startNodeID][i], startNodeID, randCost);
 			}
@@ -221,15 +209,61 @@ GraphModel.prototype.initializeGraphModel = function() {
 
 
 /*
- * Return the graph to its starting state: no nodes and no edges
+ * Create a new set of question templateString
  */
-GraphModel.prototype.reset = function() {
-	// array of nodes - starts off empty
-	emptyOutArray(this.nodes);
-	// array of edges - starts off empty
-	emptyOutArray(this.edges);
+GraphModel.prototype.initializeQuestions = function() {
+	// Each question template is an array holding either strings
+  // or executable commands stored as strings.
+  this.questions = [
+ 	 ["How many nodes does this graph have?"],
+ 	 ["What is the cardinality of this graph?"],
+ 	 ["What is the degree of node ",
+ 		this.randomNode().nodeID,
+ 		"?"],
+ 	 ["True or False: There an edge between node ",
+ 		this.randomNode().nodeID,
+ 		" and node ",
+ 		this.randomNode().nodeID]
+  ];
+  // the question index is used to rotate through the questions
+  this.questionIndex = 0;
+	// the answer(s) is/are stored in an array
+	this.answers = [];
 }
 
+
+/*
+ * Set the answer(s) to the question indicated by questionIndex.
+ * Right now I'm using a really clunky approach. I'm sure there's
+ * a better way.
+ */
+GraphModel.prototype.setAnswers = function() {
+	// How many nodes does this graph have?
+	if (this.questionIndex == 0) {
+		this.answers.push(this.connectedNodeList().length);
+	// What is the cardinality of this graph?
+	} else if (this.questionIndex == 1) {
+		this.answers.push(this.cardinality());
+	// What is the degree of node _x_?
+	} else if (this.questionIndex == 2) {
+		// what's the ID of the node?
+		var nodeID = this.questions[this.questionIndex][1];
+		// use the ID to get a pointer to the node
+		var node = this.nodes[this.findNode(nodeID)];
+		// get the degree of the node
+		this.answers.push(this.degree(node));
+	// True or False: There is an edge between node _x_ and node_y_
+	} else if (this.questionIndex == 3) {
+		// what's the ID of node X?
+		var nodeXID = this.questions[this.questionIndex][1];
+		// what's the ID of node Y?
+		var nodeYID = this.questions[this.questionIndex][3];
+		// find out if there is an edge between the two nodes
+		var answer = this.findEdge(nodeXID, nodeYID) >= 0;
+		// save the answer
+		this.answers.push(answer);
+	}
+}
 
 /*
  * Choose a random node for use in a question
@@ -355,22 +389,39 @@ GraphModel.prototype.dumpGraph = function() {
 	}
 }
 
+/*
+ * This function is used to answer questions about a graph's cardinality
+ * i.e., how many edges are in the graph
+ */
+GraphModel.prototype.cardinality = function() {
+	if (this.undirected) {
+		return this.edges.length / 2;
+	} else {
+		return this.edges.length;
+	}
+}
 
 /*
  * These functions count how many edges a given node has
  */
-GraphModel.prototype.degree = function(node){
+GraphModel.prototype.degree = function(node) {
 	var counter = 0;
-	//	loop through the node array
-	for (var i in this.nodes){
-		// is there an egde between the given node and the node in the array?
-		if (this.findEdge(node.nodeID, this.nodes[i].nodeID) != -1 ||
-		 this.findEdge(this.nodes[i].nodeID, node.nodeID) != -1){
-		 	// count it
-			counter += 1;
+	// if this is an undirected graph, count each edge once
+	if (this.undirected) {
+		//	loop through the node array
+		for (var i in this.nodes){
+			// is there an egde between the given node and the node in the array?
+			if (this.findEdge(node.nodeID, this.nodes[i].nodeID) != -1) {
+			 	// count it
+				counter += 1;
+			}
 		}
+		// divide by two, because we count each node twice
+		return counter;
+	// if this is a directed graph, add up the in and out degrees
+	} else {
+		return this.inDegree(node) + this.outDegree(node);
 	}
-	return counter;
 }
 
 
@@ -406,13 +457,29 @@ GraphModel.prototype.outDegree = function(node){
  * This function returns a list of all the nodes in the graph.
  */
 GraphModel.prototype.nodeList = function() {
-// 	console.log("-----Node List-----");
 	// create empty array to store list
 	var nodeList = [];
 	// loop through the nodes array
 	for	(var index = 0; index < this.nodes.length; index++) {
 		// add nodeID to path
 		nodeList[nodeList.length] = this.nodes[index].nodeID;
+	}
+	// return list of nodes
+	return nodeList;
+}
+
+
+/*
+ * This function returns a list of all nodes with degree >= 1
+ */
+GraphModel.prototype.connectedNodeList = function() {
+	// create empty array to store list
+	var nodeList = [];
+	// loop through the nodes array
+	for	(var index = 0; index < this.nodes.length; index++) {
+		if (this.degree(this.nodes[index]) > 0)
+			// add nodeID to list
+			nodeList[nodeList.length] = this.nodes[index].nodeID;
 	}
 	// return list of nodes
 	return nodeList;
