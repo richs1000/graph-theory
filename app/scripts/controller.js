@@ -53,32 +53,15 @@ GraphController.prototype.setupDisplay = function() {
 	// choose a new set of random questions
 	this.graphModel.createNewQuestions();
 	// choose a question randomly
-	this.chooseQuestion();
+	this.graphModel.chooseQuestion();
 	// store the answer(s) to the question we chose in the last step
 	this.graphModel.setAnswers();
 	// draw the results for the last five questions
 	this.graphView.drawAnswerHistory(this.graphModel.answerHistory);
 	// draw the graph on the screen
-	this.graphView.drawGraph(this.graphModel.nodes, this.graphModel.edges, this.graphModel.get('undirected'));
+	this.graphView.drawGraph(this.graphModel.nodes, this.graphModel.edges, this.graphModel.get('undirected') == 'true');
 	// display the next question
 	this.graphView.presentQuestion();
-}
-
-
-GraphController.prototype.chooseQuestion = function() {
-	// choose a question index at random
-	this.graphModel.questionIndex = getRandomInt(0, this.graphModel.questions.length);
-	// get the corresponding question template
-	var questionTemplate = this.graphModel.questions[this.graphModel.questionIndex];
-	// start with an empty question string
-	this.graphModel.question = "";
-	// loop through every line of the template
-	for (index = 0; index < questionTemplate.length; index++) {
-		// get the next line of the template
-		var templateString = questionTemplate[index];
-		// add it to the question string
-		this.graphModel.question = this.graphModel.question + templateString;
-	}
 }
 
 

@@ -51,10 +51,12 @@ GraphView.prototype.setupControls = function() {
 			graphController.setModelValue('mastery', 'true');
 			// send the student a message
 			console.log('victoia!!!');
+			// tell Smart Sparrow to check the done condition
 			graphController.triggerCheck();
+		} else {
+			// enable next question button
+			$( "#btnNextQuestion" ).prop('disabled', false);
 		}
-		// enable next question button
-		$( "#btnNextQuestion" ).prop('disabled', false);
 		// disable submit button
 		$( "#btnSubmit" ).prop('disabled', true);
 		// disable text field where the user enters an answer
@@ -270,7 +272,6 @@ GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected) {
 		//
 		// if we have a cost, add costs to the graph
 		//
-		/*
 		if (cost > 0) {
 			// set the font for the cost
 			this.graphContext.textAlign = "center";
@@ -281,11 +282,10 @@ GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected) {
 			var midX = Math.floor((startX + endX) / 2);
 			var midY = Math.floor((startY + endY) / 2);
 			// create a string for the cost value
-			var costString = "g=" + cost;
+			var costString = cost.toString();
 			// draw the cost string
 			this.graphContext.fillText(costString, midX, midY);
 		}
-		*/
 	} // if we have a context
 }
 

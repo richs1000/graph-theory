@@ -185,7 +185,7 @@ GraphModel.prototype.createNewGraph = function() {
 	// node
 	// if the graph is undirected, I only consider half the possible
 	// edges
-	if (this.get('undirected')) {
+	if (this.get('undirected') == 'true') {
 		var neighborDict = {
 			A:['B', 'D', 'E'],
 			B:['C', 'D', 'E', 'F'],
@@ -226,12 +226,19 @@ GraphModel.prototype.createNewGraph = function() {
 		}
 		// create an edge for all the nodes remaining in the neighbors array
 		for (var i=0; i < neighborDict[startNodeID].length; i++) {
-			// pick a random cost for the edge
-			var randCost = getRandomInt(0, 10);
+			// if there is already an edge between these two nodes
+			if (this.findEdge(neighborDict[startNodeID][i], startNodeID) >= 0) {
+				//  use the same cost for both edges
+				randCost = this.findEdgeCost(neighborDict[startNodeID][i], startNodeID);
+			// if there isn't already an edge between these two nodes,
+			} else {
+				// pick a random cost for the edge
+				var randCost = getRandomInt(1, 10);
+			}
 			// add the edge and its cost to the graph model
 			this.addEdgeToGraph(startNodeID, neighborDict[startNodeID][i], randCost);
 			// if this is an undirected graph, then add an edge in the other direction
-			if (this.get('undirected')) {
+			if (this.get('undirected') == 'true') {
 				// add the "opposite" edge and its cost to the graph model
 				this.addEdgeToGraph(neighborDict[startNodeID][i], startNodeID, randCost);
 			}
@@ -240,20 +247,19 @@ GraphModel.prototype.createNewGraph = function() {
 	console.log(this.adjacencyList)
 }
 
-
 /*
  * Create a new set of question templateString
  */
 GraphModel.prototype.createNewQuestions = function() {
 	// pick a random edge
-	tempEdge = this.randomEdge();
+	var tempEdge = this.randomEdge();
 	// pick a random node
-	tempNode1 = this.randomNode();
+	var tempNode1 = this.randomNode();
 	do
 		// pick another random node
-		tempNode2 = this.randomNode();
+		var tempNode2 = this.randomNode();
 	// make sure we get two different nodes
-	while (tempNode2.nodeID == tempNode1.nodeID) {
+	while (tempNode2.nodeID == tempNode1.nodeID);
 	// Each question template is an array holding either strings
   // or executable commands stored as strings.
   this.questions = [
@@ -265,7 +271,7 @@ GraphModel.prototype.createNewQuestions = function() {
  	 ["True or False: There an edge from node ",
  		tempNode1.nodeID,
  		" to node ",
- 		tempNode1.nodeID],
+ 		tempNode2.nodeID],
 	 ["What is the weight of the edge from node ",
     tempEdge.fromNodeID,
 		" to node ",
@@ -277,6 +283,26 @@ GraphModel.prototype.createNewQuestions = function() {
 	this.answers = [];
 	// the actual question is stored in a string
 	this.question = '';
+}
+
+
+/*
+ * choose a random template and useit to construct a new question string
+ */
+GraphModel.prototype.chooseQuestion = function() {
+	// choose a question index at random
+	this.questionIndex = getRandomInt(this.get('firstQuestion'), this.get('lastQuestion') + 1);
+	// get the corresponding question template
+	var questionTemplate = this.questions[this.questionIndex];
+	// start with an empty question string
+	this.question = "";
+	// loop through every line of the template
+	for (index = 0; index < questionTemplate.length; index++) {
+		// get the next line of the template
+		var templateString = questionTemplate[index];
+		// add it to the question string
+		this.question = this.question + templateString;
+	}
 }
 
 
@@ -318,9 +344,9 @@ GraphModel.prototype.setAnswers = function() {
 		// what's the ID of node Y?
 		var nodeYID = this.questions[this.questionIndex][3];
 		// find out if there is an edge between the two nodes
-		var index = this.findEdge(nodeXID, nodeYID) >= 0;
+		var index = this.findEdge(nodeXID, nodeYID);
 		// save the answer
-		this.answers.push(this.edges[index].cost);		
+		this.answers.push(this.edges[index].cost);
 	}
 	console.log(this.answers)
 }
@@ -346,7 +372,7 @@ GraphModel.prototype.randomNode = function() {
  */
 GraphModel.prototype.randomEdge = function() {
 	// choose a random index and return the edge
-	return this.nodes[getRandomInt(0, this.edges.length)];
+	return this.edges[getRandomInt(0, this.edges.length)];
 }
 
 
@@ -463,7 +489,7 @@ GraphModel.prototype.dumpGraph = function() {
  * i.e., how many edges are in the graph
  */
 GraphModel.prototype.cardinality = function() {
-	if (this.get('undirected')) {
+	if (this.get('undirected') == 'true') {
 		return this.edges.length / 2;
 	} else {
 		return this.edges.length;
@@ -476,7 +502,7 @@ GraphModel.prototype.cardinality = function() {
 GraphModel.prototype.degree = function(node) {
 	var counter = 0;
 	// if this is an undirected graph, count each edge once
-	if (this.get('undirected')) {
+	if (this.get('undirected') == true) {
 		//	loop through the node array
 		for (var i in this.nodes){
 			// is there an egde between the given node and the node in the array?
