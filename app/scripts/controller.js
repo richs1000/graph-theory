@@ -20,6 +20,7 @@ function GraphController() {
 		numerator: 4,
 		denominator: 5,
 		undirected: 'false',
+		weighted: 'true',
 		firstQuestion: 0,
 		lastQuestion: 4
 	});

@@ -55,7 +55,7 @@ function GraphEdge(_fromNodeID, _toNodeID, _cost) {
 	// end node
 	this.toNodeID = _toNodeID || '';
 	// cost of edge (g value)
-	this.cost = _cost || 0;
+  this.cost = _cost || 0;
 } // GraphEdge
 
 
@@ -87,10 +87,12 @@ function GraphModel(_controller, _attrs) {
 	//this.masteryDenominator = 5;
 	// the graph is directed or undirected
 	// this.undirected = _undirected;
+	// the graph has a weight associated with each edge
+	// this.weighted = _weighted
 	// the index of the first legal question template in the template array
 	// this.firstQuestion = 0
 	// the index of the last legal question template in the template array
-	// this.lastQuestion = 0
+	// this.lastQuestion = 4
 } // GraphModel
 
 
@@ -226,14 +228,18 @@ GraphModel.prototype.createNewGraph = function() {
 		}
 		// create an edge for all the nodes remaining in the neighbors array
 		for (var i=0; i < neighborDict[startNodeID].length; i++) {
-			// if there is already an edge between these two nodes
-			if (this.findEdge(neighborDict[startNodeID][i], startNodeID) >= 0) {
-				//  use the same cost for both edges
-				randCost = this.findEdgeCost(neighborDict[startNodeID][i], startNodeID);
-			// if there isn't already an edge between these two nodes,
+			if (this.get('weighted') == 'false') {
+				randCost = 0;
 			} else {
-				// pick a random cost for the edge
-				var randCost = getRandomInt(1, 10);
+				// if there is already an edge between these two nodes
+				if (this.findEdge(neighborDict[startNodeID][i], startNodeID) >= 0) {
+					//  use the same cost for both edges
+					randCost = this.findEdgeCost(neighborDict[startNodeID][i], startNodeID);
+				// if there isn't already an edge between these two nodes,
+				} else {
+					// pick a random cost for the edge
+					var randCost = getRandomInt(1, 10);
+				}
 			}
 			// add the edge and its cost to the graph model
 			this.addEdgeToGraph(startNodeID, neighborDict[startNodeID][i], randCost);
