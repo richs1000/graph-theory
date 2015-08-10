@@ -19,7 +19,9 @@ function GraphController() {
 		mastery: 'false',
 		numerator: 4,
 		denominator: 5,
-		undirected: 'true',
+		undirected: 'false',
+		firstQuestion: 0,
+		lastQuestion: 4
 	});
 	// expose model data to Smart Sparrow
 	pipit.CapiAdapter.expose('mastery', this.graphModel);

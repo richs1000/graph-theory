@@ -85,8 +85,12 @@ function GraphModel(_controller, _attrs) {
 	//this.masteryNumerator = 4;
 	// this is the denominator for the mastery condition - out of how many total?
 	//this.masteryDenominator = 5;
-	// // the graph is directed or undirected
+	// the graph is directed or undirected
 	// this.undirected = _undirected;
+	// the index of the first legal question template in the template array
+	// this.firstQuestion = 0
+	// the index of the last legal question template in the template array
+	// this.lastQuestion = 0
 } // GraphModel
 
 
@@ -241,18 +245,31 @@ GraphModel.prototype.createNewGraph = function() {
  * Create a new set of question templateString
  */
 GraphModel.prototype.createNewQuestions = function() {
+	// pick a random edge
+	tempEdge = this.randomEdge();
+	// pick a random node
+	tempNode1 = this.randomNode();
+	do
+		// pick another random node
+		tempNode2 = this.randomNode();
+	// make sure we get two different nodes
+	while (tempNode2.nodeID == tempNode1.nodeID) {
 	// Each question template is an array holding either strings
   // or executable commands stored as strings.
   this.questions = [
  	 ["How many nodes does this graph have?"],
  	 ["What is the cardinality of this graph?"],
  	 ["What is the degree of node ",
- 		this.randomNode().nodeID,
+ 		tempNode1.nodeID,
  		"?"],
- 	 ["True or False: There an edge between node ",
- 		this.randomNode().nodeID,
- 		" and node ",
- 		this.randomNode().nodeID]
+ 	 ["True or False: There an edge from node ",
+ 		tempNode1.nodeID,
+ 		" to node ",
+ 		tempNode1.nodeID],
+	 ["What is the weight of the edge from node ",
+    tempEdge.fromNodeID,
+		" to node ",
+	  tempEdge.toNodeID]
   ];
   // the question index is used to rotate through the questions
   this.questionIndex = 0;
@@ -295,6 +312,15 @@ GraphModel.prototype.setAnswers = function() {
 		var answer = this.findEdge(nodeXID, nodeYID) >= 0;
 		// save the answer
 		this.answers.push(answer);
+	} else if (this.questionIndex == 4) {
+		// what's the ID of node X?
+		var nodeXID = this.questions[this.questionIndex][1];
+		// what's the ID of node Y?
+		var nodeYID = this.questions[this.questionIndex][3];
+		// find out if there is an edge between the two nodes
+		var index = this.findEdge(nodeXID, nodeYID) >= 0;
+		// save the answer
+		this.answers.push(this.edges[index].cost);		
 	}
 	console.log(this.answers)
 }
@@ -312,6 +338,15 @@ GraphModel.prototype.randomNode = function() {
 	}
 	// return the node
 	return this.nodes[index];
+}
+
+
+/*
+ * Choose a random edge for use in a question
+ */
+GraphModel.prototype.randomEdge = function() {
+	// choose a random index and return the edge
+	return this.nodes[getRandomInt(0, this.edges.length)];
 }
 
 
