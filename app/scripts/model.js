@@ -28,19 +28,6 @@ function getRandomInt(min, max) {
 
 
 /*
- * I use the Question class to store the question string and
- * the acceptable answer(s)
- */
-function Question(_question, _answers) {
-	// the question is a string that can be displayed to the user
-	this.question = _question;
-	// answers are stored in an array, to accommodate questions with
-	// multiple answers
-	this.answers = _answers;
-}
-
-
-/*
  * GraphNode represents the nodes within the state space graph.
  * A graph node has a unique ID. Depending on the search
  * algorithm being used, it may or may not have a heuristic
@@ -91,10 +78,6 @@ function GraphModel(_controller, _attrs) {
 		this.answerHistory.push(null);
 	}
 
-	//
-	// questions
-	//
-
 	// the things below are in the data model so I don't declare them here
 	// this flag is set to true when the mastery condition is reached
 	//this.mastery = false;
@@ -123,7 +106,7 @@ GraphModel.prototype = new pipit.CapiAdapter.CapiModel;
  * and adjacency matrix are used to answer questions posed to the
  * user.
 */
-GraphModel.prototype.initializeGraphModel = function() {
+GraphModel.prototype.createNewGraph = function() {
 	// reset array of nodes
 	this.nodes = [];
 // reset array of edges - starts off empty
@@ -211,7 +194,7 @@ GraphModel.prototype.initializeGraphModel = function() {
 /*
  * Create a new set of question templateString
  */
-GraphModel.prototype.initializeQuestions = function() {
+GraphModel.prototype.createNewQuestions = function() {
 	// Each question template is an array holding either strings
   // or executable commands stored as strings.
   this.questions = [
@@ -229,6 +212,8 @@ GraphModel.prototype.initializeQuestions = function() {
   this.questionIndex = 0;
 	// the answer(s) is/are stored in an array
 	this.answers = [];
+	// the actual question is stored in a string
+	this.question = '';
 }
 
 
@@ -238,6 +223,8 @@ GraphModel.prototype.initializeQuestions = function() {
  * a better way.
  */
 GraphModel.prototype.setAnswers = function() {
+	// Reset answers array
+	this.answers = [];
 	// How many nodes does this graph have?
 	if (this.questionIndex == 0) {
 		this.answers.push(this.connectedNodeList().length);
@@ -263,6 +250,7 @@ GraphModel.prototype.setAnswers = function() {
 		// save the answer
 		this.answers.push(answer);
 	}
+	console.log(this.answers)
 }
 
 /*

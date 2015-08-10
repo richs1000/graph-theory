@@ -25,12 +25,9 @@ function GraphController() {
 	pipit.CapiAdapter.expose('mastery', this.graphModel);
 	pipit.CapiAdapter.expose('numerator', this.graphModel);
 	pipit.CapiAdapter.expose('denominator', this.graphModel);
-	// initialize the data model
-	this.graphModel.initializeGraphModel();
-	this.graphModel.initializeQuestions();
 	// initialize the view
 	this.graphView = new GraphView(this);
-	this.updateDisplay();
+	this.setupDisplay();
 }
 
 
@@ -44,7 +41,15 @@ GraphController.prototype.getModelValue = function(_name) {
 }
 
 
-GraphController.prototype.updateDisplay = function() {
+GraphController.prototype.setupDisplay = function() {
+	// create a brand new graph - randomly choose nodes and edges
+	this.graphModel.createNewGraph();
+	// choose a new set of random questions
+	this.graphModel.createNewQuestions();
+	// choose a question randomly
+	this.chooseQuestion();
+	// store the answer(s) to the question we chose in the last step
+	this.graphModel.setAnswers();
 	// draw the results for the last five questions
 	this.graphView.drawAnswerHistory(this.graphModel.answerHistory);
 	// draw the graph on the screen
@@ -54,25 +59,20 @@ GraphController.prototype.updateDisplay = function() {
 }
 
 
-GraphController.prototype.nextQuestion = function() {
+GraphController.prototype.chooseQuestion = function() {
 	// choose a question index at random
 	this.graphModel.questionIndex = getRandomInt(0, this.graphModel.questions.length);
 	// get the corresponding question template
 	var questionTemplate = this.graphModel.questions[this.graphModel.questionIndex];
 	// start with an empty question string
-	var questionString = "";
+	this.graphModel.question = "";
 	// loop through every line of the template
 	for (index = 0; index < questionTemplate.length; index++) {
 		// get the next line of the template
 		var templateString = questionTemplate[index];
 		// add it to the question string
-		questionString = questionString + templateString;
+		this.graphModel.question = this.graphModel.question + templateString;
 	}
-	// store the answer(s)
-	this.graphModel.setAnswers();
-	console.log(this.graphModel.answers)
-	// return the question string
-	return questionString;
 }
 
 

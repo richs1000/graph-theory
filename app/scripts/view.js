@@ -25,15 +25,6 @@ function GraphView(_controller) {
 }
 
 
-GraphView.prototype.presentQuestion = function () {
-	console.log('presenting question');
-	// clear the existing question
-	$( "#lblQuestion" ).text(this.controller.nextQuestion());
-	// empty the text field where the user enters an answer
-	$( "#txtAnswer" ).val('');
-};
-
-
 GraphView.prototype.setupControls = function() {
 	// add event handler for submit button
 	$( "#btnSubmit" ).click(function() {
@@ -50,13 +41,23 @@ GraphView.prototype.setupControls = function() {
 	});
 	// add event handler for next question button
 	$( "#btnNextQuestion" ).click(function() {
-		// empty the text field where the user enters an answer
-		$( "#txtAnswer" ).val('');
 		// disable next question button
 		$( "#btnNextQuestion" ).prop('disabled', true);
+		// erase the old question
+		$( "#lblQuestion" ).text('');
+		// empty the text field where the user enters an answer
+		$( "#txtAnswer" ).val('');
+		// pass off to the controller to create and display a
+		// new graph and new question
+		graphController.setupDisplay();
 	});
 }
 
+
+GraphView.prototype.presentQuestion = function() {
+	// display the new question
+	$( "#lblQuestion" ).text(this.controller.graphModel.question);
+}
 
 /*
  * draw squares for each answer we'll consider - for example,
@@ -127,7 +128,7 @@ GraphView.prototype.setupGraphView = function() {
 GraphView.prototype.drawGraph = function(nodes, edges, undirected) {
 	// erase the canvas
 	this.graphContext.clearRect(0, 0, this.graphCanvas.width, this.graphCanvas.height);
-	this.graphContext.canvas.width  = (window.innerWidth / 3) - 10;
+	//this.graphContext.canvas.width  = (window.innerWidth / 3) - 10;
 	// draw all the nodes
 	this.drawNodes(nodes);
 	// draw the edges between the nodes
