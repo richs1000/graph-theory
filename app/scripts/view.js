@@ -48,7 +48,7 @@ GraphView.prototype.setupControls = function() {
 		// has mastery been demonstrated?
 		if (graphController.graphModel.masteryAchieved()) {
 			// set the mastery achieved flag
-			graphController.setModelValue('mastery', true);
+			graphController.setModelValue('mastery', 'true');
 			// send the student a message
 			console.log('victoia!!!');
 			//pipit.Controller.triggerCheck();
