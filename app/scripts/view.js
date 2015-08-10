@@ -278,9 +278,15 @@ GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected) {
 			this.graphContext.textBaseline = "bottom";
 			this.graphContext.fillStyle = "red";
 			this.graphContext.font = "12pt Helvetica";
+			// get starting x,y coordinates
+			var startX = this.graphNodes[startNode].x;
+			var startY = this.graphNodes[startNode].y;
+			// get ending x,y coordinates
+			var endX = this.graphNodes[endNode].x;
+			var endY = this.graphNodes[endNode].y;
 			// get mid-point x,y coordinates
-			var midX = Math.floor((startX + endX) / 2);
-			var midY = Math.floor((startY + endY) / 2);
+			var midX = Math.floor(2 * (startX + endX) / 3);
+			var midY = Math.floor(2 * (startY + endY) / 3);
 			// create a string for the cost value
 			var costString = cost.toString();
 			// draw the cost string
