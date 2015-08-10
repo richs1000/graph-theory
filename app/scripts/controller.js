@@ -33,6 +33,7 @@ function GraphController() {
 
 GraphController.prototype.setModelValue = function(_name, _newValue) {
 	this.graphModel.set(_name, _newValue);
+	pipit.CapiAdapter.expose(_name, this.graphModel);
 	pipit.Controller.notifyOnReady();
 	console.log('mastery = ' + this.graphModel.get('mastery'))
 }
