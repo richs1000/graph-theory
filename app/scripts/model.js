@@ -135,7 +135,7 @@ GraphModel.prototype.masteryAchieved = function() {
  */
 GraphModel.prototype.checkAnswer = function (studentAnswer) {
 	for (var i = 0; i < this.answers.length; i++) {
-		if (this.answers[i].toString() == studentAnswer) {
+		if (this.answers[i].toString().toLowerCase() == studentAnswer.toString().toLowerCase()) {
 			return true;
 		}
 	}
