@@ -17,8 +17,8 @@ function GraphController() {
 	// create a data model that exposes parameters to smart sparrow
 	this.graphModel = new GraphModel(this, {
 		mastery: 'false',
-		numerator: 4,
-		denominator: 5,
+		numerator: 1,
+		denominator: 2,
 		undirected: 'true',
 	});
 	// expose model data to Smart Sparrow

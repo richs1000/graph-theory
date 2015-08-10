@@ -29,24 +29,47 @@ GraphView.prototype.setupControls = function() {
 	// add event handler for submit button
 	$( "#btnSubmit" ).click(function() {
 		// check the answer
-
+		var studentAnswer = $( "#txtAnswer" ).val();
+		console.log("Student answered " + studentAnswer);
 		// record whether it was right or wrong
-
-		// display a message: correct or not?
-		$( "#txtFeedback" ).html("The correct answer is...");
+		var rightAnswer = graphController.graphModel.checkAnswer(studentAnswer);
+		// store the results
+		graphController.graphModel.updateAnswerHistory(rightAnswer);
+		// draw the results for the last five questions
+		graphController.graphView.drawAnswerHistory(graphController.graphModel.answerHistory);
+		// if they got the right answer
+		if (rightAnswer) {
+			// give them feedback
+			$( "#txtFeedback" ).html("Right. The answer is " + studentAnswer);
+		} else {
+			// give them feedback
+			$( "#txtFeedback" ).html("That is incorrect. The correct answer is " + graphController.graphModel.answers[0]);
+		}
 		// has mastery been demonstrated?
-		graphController.setModelValue('mastery', true);
+		if (graphController.graphModel.masteryAchieved()) {
+			// set the mastery achieved flag
+			graphController.setModelValue('mastery', true);
+			// send the student a message
+			console.log('victoia!!!');
+			pipit.Controller.triggerCheck();
+		}
 		// enable next question button
 		$( "#btnNextQuestion" ).prop('disabled', false);
+		// disable submit button
+		$( "#btnSubmit" ).prop('disabled', true);
 	});
 	// add event handler for next question button
 	$( "#btnNextQuestion" ).click(function() {
 		// disable next question button
 		$( "#btnNextQuestion" ).prop('disabled', true);
+		// ensable submit button
+		$( "#btnSubmit" ).prop('disabled', false);
 		// erase the old question
 		$( "#lblQuestion" ).text('');
 		// empty the text field where the user enters an answer
 		$( "#txtAnswer" ).val('');
+		// clear the feedback from the last question
+		$( "#txtFeedback" ).html('');
 		// pass off to the controller to create and display a
 		// new graph and new question
 		graphController.setupDisplay();

@@ -98,6 +98,52 @@ GraphModel.prototype = new pipit.CapiAdapter.CapiModel;
 
 
 /*
+ * Add a new item to the back of the answer history, pull an item off
+ * the front. Since the queue starts out filled with nulls, it is always
+ * the same size.
+ */
+GraphModel.prototype.updateAnswerHistory = function(newAnswer) {
+	// add a new item to the back of the answer history
+	this.answerHistory.push(newAnswer);
+	// pull the oldest item off the front
+	this.answerHistory.shift();
+}
+
+
+/*
+ * Look at the answer history to see if we have met the criterion for
+ * demonstrating mastery
+ */
+GraphModel.prototype.masteryAchieved = function() {
+	// count up the number of right answers
+	var count = 0;
+	// loop through the answer history
+	for (var i = 0; i < this.answerHistory.length; i++) {
+		// if we got the question right
+		if (this.answerHistory[i]) {
+			// increase our count
+			count += 1;
+		}
+	}
+	// compare the correct count to our goal
+	return count >= this.get('numerator');
+}
+
+
+/*
+ * Compare the student's answer to the correct answer(s).
+ */
+GraphModel.prototype.checkAnswer = function (studentAnswer) {
+	for (var i = 0; i < this.answers.length; i++) {
+		if (this.answers[i].toString() == studentAnswer) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
+/*
 * This function empties out any old nodes from a previous graph and
 * creates brand new nodes.
  * This function also gets rid of any old edges and then stores three
