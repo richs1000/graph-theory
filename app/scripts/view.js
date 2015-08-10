@@ -51,7 +51,7 @@ GraphView.prototype.setupControls = function() {
 			graphController.setModelValue('mastery', 'true');
 			// send the student a message
 			console.log('victoia!!!');
-			//pipit.Controller.triggerCheck();
+			graphController.triggerCheck();
 		}
 		// enable next question button
 		$( "#btnNextQuestion" ).prop('disabled', false);

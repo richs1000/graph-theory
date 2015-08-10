@@ -17,8 +17,8 @@ function GraphController() {
 	// create a data model that exposes parameters to smart sparrow
 	this.graphModel = new GraphModel(this, {
 		mastery: 'false',
-		numerator: 1,
-		denominator: 2,
+		numerator: 4,
+		denominator: 5,
 		undirected: 'true',
 	});
 	// expose model data to Smart Sparrow
@@ -33,9 +33,9 @@ function GraphController() {
 
 GraphController.prototype.setModelValue = function(_name, _newValue) {
 	this.graphModel.set(_name, _newValue);
-	pipit.CapiAdapter.expose(_name, this.graphModel);
-	pipit.Controller.notifyOnReady();
-	console.log('mastery = ' + this.graphModel.get('mastery'))
+	// pipit.CapiAdapter.expose(_name, this.graphModel);
+	// pipit.Controller.notifyOnReady();
+	// console.log('mastery = ' + this.graphModel.get('mastery'))
 }
 
 
@@ -43,6 +43,10 @@ GraphController.prototype.getModelValue = function(_name) {
 	return this.graphModel.get(_name);
 }
 
+
+GraphController.prototype.triggerCheck = function() {
+	pipit.Controller.triggerCheck();
+}
 
 GraphController.prototype.setupDisplay = function() {
 	// create a brand new graph - randomly choose nodes and edges
