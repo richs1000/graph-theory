@@ -57,15 +57,25 @@ GraphView.prototype.setupControls = function() {
 		$( "#btnNextQuestion" ).prop('disabled', false);
 		// disable submit button
 		$( "#btnSubmit" ).prop('disabled', true);
+		// disable text field where the user enters an answer
+		$( "#txtAnswer" ).prop('disabled', true);
+	});
+	// call the submit button click-handler if the user hits the enter key
+	$( '#txtAnswer' ).keypress(function(e){
+			if(e.which == 13){//Enter key pressed
+					$( '#btnSubmit' ).click();//Trigger search button click event
+			}
 	});
 	// add event handler for next question button
 	$( "#btnNextQuestion" ).click(function() {
 		// disable next question button
 		$( "#btnNextQuestion" ).prop('disabled', true);
-		// ensable submit button
+		// enable submit button
 		$( "#btnSubmit" ).prop('disabled', false);
 		// erase the old question
 		$( "#lblQuestion" ).text('');
+		// enable text field where the user enters an answer
+		$( "#txtAnswer" ).prop('disabled', false);
 		// empty the text field where the user enters an answer
 		$( "#txtAnswer" ).val('');
 		// clear the feedback from the last question
