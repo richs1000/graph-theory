@@ -523,7 +523,7 @@ GraphModel.prototype.cardinality = function() {
 GraphModel.prototype.degree = function(node) {
 	var counter = 0;
 	// if this is an undirected graph, count each edge once
-	if (this.get('undirected') == true) {
+	if (this.get('undirected') == 'true') {
 		//	loop through the node array
 		for (var i in this.nodes){
 			// is there an egde between the given node and the node in the array?
