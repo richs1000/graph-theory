@@ -28,6 +28,10 @@ function GraphController() {
 	pipit.CapiAdapter.expose('mastery', this.graphModel);
 	pipit.CapiAdapter.expose('numerator', this.graphModel);
 	pipit.CapiAdapter.expose('denominator', this.graphModel);
+	pipit.CapiAdapter.expose('undirected', this.graphModel);
+	pipit.CapiAdapter.expose('weighted', this.graphModel);
+	pipit.CapiAdapter.expose('firstQuestion', this.graphModel);
+	pipit.CapiAdapter.expose('lastQuestion', this.graphModel);
 	// initialize the view
 	this.graphView = new GraphView(this);
 	this.setupDisplay();
