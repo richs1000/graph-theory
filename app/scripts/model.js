@@ -298,7 +298,7 @@ GraphModel.prototype.createNewQuestions = function() {
 	 ["What is the in-degree of node ",
   	tempNode1.nodeID,
   	"?"],
-	 ["What is the in-degree of node ",
+	 ["What is the out-degree of node ",
 	  tempNode1.nodeID,
 	  "?"],
   ];
