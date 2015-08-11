@@ -17,8 +17,8 @@ function GraphController() {
 	// create a data model that exposes parameters to smart sparrow
 	this.graphModel = new GraphModel(this, {
 		mastery: 'false',
-		numerator: 4,
-		denominator: 5,
+		numerator: 7,
+		denominator: 10,
 		undirected: 'true',
 		weighted: 'false',
 		firstQuestion: 0,
@@ -36,6 +36,8 @@ function GraphController() {
 	pipit.CapiAdapter.expose('doNotLaunch', this.graphModel);
 	// let smart sparrow know that the sim is ready to accept values
 	pipit.Controller.notifyOnReady();
+	// set the answer history to empty
+	this.graphModel.resetAnswerHistory();
 	// initialize the view
 	this.graphView = new GraphView(this);
 	this.setupDisplay();

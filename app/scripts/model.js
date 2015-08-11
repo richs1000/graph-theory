@@ -76,9 +76,6 @@ function GraphModel(_controller, _attrs) {
 	// so we can test for mastery. we use an array as a queue that
 	// stores as many answers as we're willing to consider
 	this.answerHistory = [];
-	for (var i = 0; i < this.get('denominator'); i++) {
-		this.answerHistory.push(null);
-	}
 
 	// the things below are in the data model so I don't declare them here
 	// this flag is set to true when the mastery condition is reached
@@ -103,6 +100,13 @@ function GraphModel(_controller, _attrs) {
  * from CapiModel
  */
 GraphModel.prototype = new pipit.CapiAdapter.CapiModel;
+
+
+GraphModel.prototype.resetAnswerHistory = function() {
+	for (var i = 0; i < this.get('denominator'); i++) {
+		this.answerHistory.push(null);
+	}
+}
 
 
 /*
