@@ -165,7 +165,6 @@ GraphModel.prototype.checkAnswer = function (studentAnswer) {
  * user.
 */
 GraphModel.prototype.createNewGraph = function() {
-	console.log('hi');
 	// reset array of nodes
 	this.nodes = [];
 // reset array of edges - starts off empty
@@ -265,7 +264,6 @@ GraphModel.prototype.createNewGraph = function() {
 			}
 		}
 	}
-	console.log('bye');
 }
 
 /*
@@ -296,7 +294,13 @@ GraphModel.prototype.createNewQuestions = function() {
 	 ["What is the weight of the edge from node ",
     tempEdge.fromNodeID,
 		" to node ",
-	  tempEdge.toNodeID]
+	  tempEdge.toNodeID],
+	 ["What is the in-degree of node ",
+  	tempNode1.nodeID,
+  	"?"],
+	 ["What is the in-degree of node ",
+	  tempNode1.nodeID,
+	  "?"],
   ];
   // the question index is used to rotate through the questions
   this.questionIndex = 0;
@@ -368,8 +372,21 @@ GraphModel.prototype.setAnswers = function() {
 		var index = this.findEdge(nodeXID, nodeYID);
 		// save the answer
 		this.answers.push(this.edges[index].cost);
+	} else if (this.questionIndex == 5) {
+		// what's the ID of the node?
+		var nodeID = this.questions[this.questionIndex][1];
+		// use the ID to get a pointer to the node
+		var node = this.nodes[this.findNode(nodeID)];
+		// get the in-degree of the node
+		this.answers.push(this.inDegree(node));
+	} else if (this.questionIndex == 6) {
+		// what's the ID of the node?
+		var nodeID = this.questions[this.questionIndex][1];
+		// use the ID to get a pointer to the node
+		var node = this.nodes[this.findNode(nodeID)];
+		// get the out-degree of the node
+		this.answers.push(this.outDegree(node));
 	}
-	console.log(this.answers)
 }
 
 /*
