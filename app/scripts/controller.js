@@ -22,7 +22,8 @@ function GraphController() {
 		undirected: 'false',
 		weighted: 'false',
 		firstQuestion: 0,
-		lastQuestion: 3
+		lastQuestion: 3,
+		doNotLaunch: true;
 	});
 	// expose model data to Smart Sparrow
 	pipit.CapiAdapter.expose('mastery', this.graphModel);
@@ -32,8 +33,13 @@ function GraphController() {
 	pipit.CapiAdapter.expose('weighted', this.graphModel);
 	pipit.CapiAdapter.expose('firstQuestion', this.graphModel);
 	pipit.CapiAdapter.expose('lastQuestion', this.graphModel);
+	pipit.CapiAdapter.expose('doNotLaunch', this.graphModel);
 	// let smart sparrow know that the sim is ready to accept values
 	pipit.Controller.notifyOnReady();
+	// wait...
+	while (this.graphModel.get('doNotLaunch') == 'true') {
+		console.log('waiting...')
+	}
 	// initialize the view
 	this.graphView = new GraphView(this);
 	this.setupDisplay();
