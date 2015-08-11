@@ -49,13 +49,15 @@ function GraphNode(_nodeID) {
  * algorithm. For an undirected edge, you can either treat
  * a single edge as undirected or create two separate edges.
  */
-function GraphEdge(_fromNodeID, _toNodeID, _cost) {
+function GraphEdge(_fromNodeID, _toNodeID, _cost, _showCost) {
 	// start node
 	this.fromNodeID = _fromNodeID || '';
 	// end node
 	this.toNodeID = _toNodeID || '';
 	// cost of edge (g value)
   this.cost = _cost || 0;
+	// flag I use to control whether cost gets drawn
+	this.showCost = _showCost;
 } // GraphEdge
 
 
@@ -159,6 +161,7 @@ GraphModel.prototype.checkAnswer = function (studentAnswer) {
  * user.
 */
 GraphModel.prototype.createNewGraph = function() {
+	console.log('hi');
 	// reset array of nodes
 	this.nodes = [];
 // reset array of edges - starts off empty
@@ -229,28 +232,36 @@ GraphModel.prototype.createNewGraph = function() {
 		// create an edge for all the nodes remaining in the neighbors array
 		for (var i=0; i < neighborDict[startNodeID].length; i++) {
 			if (this.get('weighted') == 'false') {
-				randCost = 0;
+				// we use 0 to indicate that there is no cost for this edge
+				var randCost = 0;
+				// set the flag so we don't show the cost
+				var showCost = false;
 			} else {
 				// if there is already an edge between these two nodes
 				if (this.findEdge(neighborDict[startNodeID][i], startNodeID) >= 0) {
 					//  use the same cost for both edges
-					randCost = this.findEdgeCost(neighborDict[startNodeID][i], startNodeID);
+					var randCost = this.findEdgeCost(neighborDict[startNodeID][i], startNodeID);
+					// we will draw the cost for the "partner" to this edge - this way
+					// the cost is only drawn once
+					var showCost = false;
 				// if there isn't already an edge between these two nodes,
 				} else {
 					// pick a random cost for the edge
 					var randCost = getRandomInt(1, 10);
+					// make sure we do show the cost
+					var showCost = true;
 				}
 			}
 			// add the edge and its cost to the graph model
-			this.addEdgeToGraph(startNodeID, neighborDict[startNodeID][i], randCost);
+			this.addEdgeToGraph(startNodeID, neighborDict[startNodeID][i], randCost, showCost);
 			// if this is an undirected graph, then add an edge in the other direction
 			if (this.get('undirected') == 'true') {
 				// add the "opposite" edge and its cost to the graph model
-				this.addEdgeToGraph(neighborDict[startNodeID][i], startNodeID, randCost);
+				this.addEdgeToGraph(neighborDict[startNodeID][i], startNodeID, randCost, false);
 			}
 		}
 	}
-	console.log(this.adjacencyList)
+	console.log('bye');
 }
 
 /*
@@ -453,7 +464,7 @@ GraphModel.prototype.addNodeToGraph = function(nodeID) {
 /*
  * This function is used to add an edge to the edges array
  */
-GraphModel.prototype.addEdgeToGraph = function(fromNodeID, toNodeID, cost) {
+GraphModel.prototype.addEdgeToGraph = function(fromNodeID, toNodeID, cost, showCost) {
 	// are the from and to nodes the same?
 	if (fromNodeID == toNodeID) return;
 	// Is cost > 0?
@@ -461,7 +472,7 @@ GraphModel.prototype.addEdgeToGraph = function(fromNodeID, toNodeID, cost) {
 	// does the edge already exist?
 	if (this.findEdge(fromNodeID, toNodeID) >= 0) return;
 	// Create a GraphEdge object
-	var newGraphEdge = new GraphEdge(fromNodeID, toNodeID, cost);
+	var newGraphEdge = new GraphEdge(fromNodeID, toNodeID, cost, showCost);
 	// Add GraphEdge object to array of edges
 	this.edges.push(newGraphEdge);
 	// add edge to the adjacency list

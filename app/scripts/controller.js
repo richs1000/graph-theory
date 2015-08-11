@@ -20,9 +20,9 @@ function GraphController() {
 		numerator: 4,
 		denominator: 5,
 		undirected: 'false',
-		weighted: 'true',
+		weighted: 'false',
 		firstQuestion: 0,
-		lastQuestion: 4
+		lastQuestion: 3
 	});
 	// expose model data to Smart Sparrow
 	pipit.CapiAdapter.expose('mastery', this.graphModel);

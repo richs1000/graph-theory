@@ -179,7 +179,7 @@ GraphView.prototype.drawEdges = function(edges, undirected) {
 	if (this.graphCanvas.getContext) {
 		// loop through the edges array
 		for	(var index = 0; index < edges.length; index++) {
-			this.drawEdge(edges[index].fromNodeID, edges[index].toNodeID, edges[index].cost, undirected);
+			this.drawEdge(edges[index].fromNodeID, edges[index].toNodeID, edges[index].cost, undirected, edges[index].showCost);
 		}
 	} // if we have a context
 }
@@ -189,7 +189,7 @@ GraphView.prototype.drawEdges = function(edges, undirected) {
  * Given the id of the start node and the end node, and a flag indicating
  * whether the edge is undirected or directed, draw an edge between two nodes
  */
-GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected) {
+GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected, showCost) {
 	// if the cost is -1 then we don't need to draw it, so we're done
 	if (cost == -1) return;
 	// make sure we have a canvas to draw in
@@ -212,26 +212,51 @@ GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected) {
 		// begin drawing at edge of nodes
 		//
 		// if the start node is to the left of the end node
-		if (startX < endX) {
-			startX += this.graphNodeRadius;
-			endX -= this.graphNodeRadius;
-		// if the start node is to the right of the end node
-		} else if (startX > endX) {
-			startX -= this.graphNodeRadius;
-			endX += this.graphNodeRadius;
+		if (startX != endX) {
+			if (startX < endX) {
+				startX += this.graphNodeRadius;
+				endX -= this.graphNodeRadius;
+			// if the start node is to the right of the end node
+			} else if (startX > endX) {
+				startX -= this.graphNodeRadius;
+				endX += this.graphNodeRadius;
+			}
+		// nodes are on top of each other
+		}  else if (startX == endX) {
+			// if the start node is above the end node
+			if (startY < endY) {
+				startY += this.graphNodeRadius;
+				endY -= this.graphNodeRadius;
+			// if the start node is below the end node
+			} else if (startY > endY) {
+				startY -= this.graphNodeRadius;
+				endY += this.graphNodeRadius;
+			}
 		}
 		//
 		// adjust y coordinate of start and end points to
 		// begin drawing at edge of nodes
 		//
 		// if the start node is above the end node
-		if (startY < endY) {
-			startY += this.graphNodeRadius;
-			endY -= this.graphNodeRadius;
-		// if the start node is below the end node
-		} else if (startY > endY) {
-			startY -= this.graphNodeRadius;
-			endY += this.graphNodeRadius;
+		if (startY != endY && startX != endX) {
+			if (startY < endY) {
+				startY += this.graphNodeRadius;
+				endY -= this.graphNodeRadius;
+			// if the start node is below the end node
+			} else if (startY > endY) {
+				startY -= this.graphNodeRadius;
+				endY += this.graphNodeRadius;
+			}
+		// nodes are at same height
+		} else if (startY != endY){
+			if (startX < endX) {
+				startX += this.graphNodeRadius;
+				endX -= this.graphNodeRadius;
+			// if the start node is to the right of the end node
+			} else if (startX > endX) {
+				startX -= this.graphNodeRadius;
+				endX += this.graphNodeRadius;
+			}
 		}
 		//
 		// draw a line from start to end
@@ -272,25 +297,19 @@ GraphView.prototype.drawEdge = function(startNode, endNode, cost, undirected) {
 		//
 		// if we have a cost, add costs to the graph
 		//
-		if (cost > 0) {
+		if (cost > 0 && showCost) {
 			// set the font for the cost
 			this.graphContext.textAlign = "center";
 			this.graphContext.textBaseline = "bottom";
 			this.graphContext.fillStyle = "red";
 			this.graphContext.font = "12pt Helvetica";
-			// get starting x,y coordinates
-			var startX = this.graphNodes[startNode].x;
-			var startY = this.graphNodes[startNode].y;
-			// get ending x,y coordinates
-			var endX = this.graphNodes[endNode].x;
-			var endY = this.graphNodes[endNode].y;
-			// get mid-point x,y coordinates
-			var midX = Math.floor((startX + endX) / 2);
-			var midY = Math.floor((startY + endY) / 2);
+			// get position for cost
+			var costX = (startX + (endX - startX) / 3) + 7;
+			var costY = startY + (endY - startY) / 3;
 			// create a string for the cost value
 			var costString = cost.toString();
 			// draw the cost string
-			this.graphContext.fillText(costString, midX, midY);
+			this.graphContext.fillText(costString, costX, costY);
 		}
 	} // if we have a context
 }
