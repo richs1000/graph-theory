@@ -23,7 +23,7 @@ function GraphController() {
 		weighted: 'false',
 		firstQuestion: 0,
 		lastQuestion: 3,
-		doNotLaunch: true;
+		doNotLaunch: true
 	});
 	// expose model data to Smart Sparrow
 	pipit.CapiAdapter.expose('mastery', this.graphModel);
